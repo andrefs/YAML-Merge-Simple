@@ -4,11 +4,6 @@ use warnings;
 use Test::More tests => 4;
 use YAML::Merge::Simple qw/merge merge_files/;
 use YAML::XS;
-use Data::Dump qw/dump/;
-use feature qw/say/;
-
-
-
 
 my $yaml1  = 't/yaml1';
 my $yaml2  = 't/yaml2';

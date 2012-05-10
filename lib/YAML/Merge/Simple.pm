@@ -4,7 +4,6 @@ package YAML::Merge::Simple;
 use 5.006;
 use Hash::Merge::Simple;
 use YAML::XS;
-use Data::Dump qw/dump/;
 
 # ABSTRACT: Recursively merge two or more YAMLs, simply
 
@@ -66,6 +65,12 @@ This is just a wrapper around Hash::Merge::Simple which uses YAML::XS to load th
 =head2 Hash::Merge::Simple::merge_files( $file1, $file2, $file3, ..., $fileN )
 
 Merge $file1 through $fileN, with the nth-most (rightmost) YAML taking precedence.
+
+Returns a string with the YAML content of the merge.
+
+=head2 Hash::Merge::Simple::merge( $string1, $string2, $string3, ..., $stringN )
+
+Merge $string1 through $stringN, with the nth-most (rightmost) YAML taking precedence.
 
 Returns a string with the YAML content of the merge.
 
