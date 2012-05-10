@@ -11,34 +11,25 @@ use Data::Dump qw/dump/;
 use vars qw/ @ISA @EXPORT_OK /;
 require Exporter;
 @ISA = qw/ Exporter /;
-@EXPORT_OK = qw/ merge clone_merge dclone_merge /;
+@EXPORT_OK = qw/ merge merge_files /;
 
 
 # This was stoled from Hash::Merge::Simple, which was inspired by Catalyst::Utils... thanks guys!
-sub merge (@);
-sub merge (@) {
-	my @yamls = map { YAML::XS::LoadFile $_ } @_;
-	dump(\@yamls);
-	my $hash = Hash::Merge::Simple::merge(@yamls);
-	
+sub merge_files (@);
+sub merge_files (@) {
+	shift unless -f $_[0]; # Take care of the case we're called like YAML::Merge::Simple->merge_files(...)
+	my @hashes = map { YAML::XS::LoadFile $_ } @_;
+	my $hash = Hash::Merge::Simple::merge(@hashes);
 	return Dump $hash;
 }
 
-
-#sub clone_merge {
-#	my @yamls = map { Load $_ } @_;
-#	my $hash = Hash::Merge::Simple::clone_merge(@yamls);
-#    return Dump $hash;
-#}
-#
-#
-#sub dclone_merge {
-#	my @yamls = map { Load $_ } @_;
-#	my $hash = Hash::Merge::Simple::dclone_merge(@yamls);
-#    return Dump $hash;
-#}
-
-
+sub merge (@);
+sub merge (@) {
+	shift unless ref $_[0]; # Take care of the case we're called like YAML::Merge::Simple->merge(...)
+	my @hashes = map { YAML::XS::Load $_ } @_;
+	my $hash = Hash::Merge::Simple::merge(@hashes);
+	return Dump $hash;
+}
 
 1;
 __END__
@@ -51,20 +42,20 @@ YAML::Merge::Simple - Recursively merge two or more YAMLs, simply
 
 =head1 SYNOPSIS
 
-    use YAML::Merge::Simple qw/ merge /;
+    use YAML::Merge::Simple qw/ merge_files /;
 
-	# a: 1
-	my $yaml1 = shift;  
-
-	# a: 100
-	# b: 2
-	my $yaml2 = shift;  
-						
+    # a: 1
+    my $yaml1 = shift;  
+    
+    # a: 100
+    # b: 2
+    my $yaml2 = shift;  
+    
     # Merge with righthand hash taking precedence
-    my $new_yaml = merge $yaml1,yaml2
+    my $new_yaml = merge_files $yaml1,yaml2
     # $c (note: a: 100 has overridden a: 1)
-	# a: 100
-	# b: 2
+    # a: 100
+    # b: 2
 
 =head1 DESCRIPTION
 
@@ -74,7 +65,7 @@ This is just a wrapper around Hash::Merge::Simple which uses YAML::XS to load th
 
 =head1 USAGE
 
-=head2 Hash::Merge::Simple->merge( $file1, $file2, $file3, ..., $fileN )
+=head2 Hash::Merge::Simple::merge_files( $file1, $file2, $file3, ..., $fileN )
 
 Merge $file1 through $fileN, with the nth-most (rightmost) YAML taking precedence.
 
