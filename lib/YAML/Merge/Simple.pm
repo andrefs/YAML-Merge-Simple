@@ -15,16 +15,14 @@ require Exporter;
 
 
 # This was stoled from Hash::Merge::Simple, which was inspired by Catalyst::Utils... thanks guys!
-sub merge_files (@);
-sub merge_files (@) {
+sub merge_files {
 	shift unless -f $_[0]; # Take care of the case we're called like YAML::Merge::Simple->merge_files(...)
 	my @hashes = map { YAML::XS::LoadFile $_ } @_;
 	my $hash = Hash::Merge::Simple::merge(@hashes);
 	return Dump $hash;
 }
 
-sub merge (@);
-sub merge (@) {
+sub merge {
 	shift unless ref $_[0]; # Take care of the case we're called like YAML::Merge::Simple->merge(...)
 	my @hashes = map { YAML::XS::Load $_ } @_;
 	my $hash = Hash::Merge::Simple::merge(@hashes);
